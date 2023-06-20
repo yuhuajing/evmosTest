@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "go-web3",
+			"path": "../go-web3"
+		},
+		{
+			"name": "evmosTest",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
