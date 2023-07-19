@@ -2,12 +2,16 @@ package main
 
 import (
 	"context"
+	"crypto/ecdsa"
 	"fmt"
+	"log"
 	"math/big"
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	tcommon "github.com/gochain/gochain/v4/common"
 	"github.com/gochain/web3"
 )
 
@@ -60,22 +64,35 @@ type Transaction struct {
 
 func main() {
 	// change to your rpc provider
-	var rpcProviderURL = "http://localhost:8545"
+	var rpcProviderURL = "http://192.168.100.191:8545"
 	client := webGetBN(rpcProviderURL)
 	b, _ := client.GetBlockNumber()
 	fmt.Println(b)
-	bloc, _ := client.GetBlockByNumber(context.Background(), big.NewInt(2), true)
-	fmt.Println(bloc.TxCount())
-	acc, _ := client.GetAccounts()
-	for _, v := range acc {
-		//account := common.BytesToAddress(v)
-		//fmt.Println(account.Hex())
-		fmt.Println(v.Hex())
-		bal, _ := client.GetBalance(context.Background(), v.Hex(), new(big.Int).SetUint64(b))
-		fmt.Println(bal)
-		TxCount, _ := client.GetTransactionCount(context.Background(), v)
-		fmt.Println(TxCount)
+	privateKey, err := crypto.HexToECDSA("e5ff5392711a137f3a4ac680e85ed29cb896427e89b4e0aa582b785722a84c49")
+	//0280b75f9a8df2b0330593b9cfbbaac84c0522ef9d2a7568a2595a44835edf60
+	//e5ff5392711a137f3a4ac680e85ed29cb896427e89b4e0aa582b785722a84c49
+	//db9d9ec53ef566aa9aed60e50c79483f34f5cb289c28b5d0c0b37046b6961347
+	if err != nil {
+		log.Fatal(err)
 	}
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		log.Fatal("cannot assert type: publicKey is not of type *ecdsa.PublicKey")
+	}
+
+	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
+	fmt.Println(address)
+
+	// bloc, _ := client.GetBlockByNumber(context.Background(), big.NewInt(2), true)
+	// fmt.Println(bloc.TxCount())
+
+	bal, _ := client.GetBalance(context.Background(), address, new(big.Int).SetUint64(b))
+	fmt.Println(bal)
+
+	TxCount, _ := client.GetTransactionCount(context.Background(), tcommon.HexToAddress(address))
+	fmt.Println(TxCount)
+
 }
 
 func webGetBN(url string) web3.Client {

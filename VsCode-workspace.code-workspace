@@ -24,13 +24,19 @@
 			"path": "../cosmos-sdk"
 		},
 		{
-			"path": "../evmos"
-		},
-		{
 			"path": "../cosmosSDK"
 		},
 		{
 			"path": "../go-ethereum"
+		},
+		{
+			"path": "../evmos"
+		},
+		{
+			"path": "../PrivatePOAEthereum"
+		},
+		{
+			"path": "../AllCommonTools"
 		}
 	],
 	"settings": {}
